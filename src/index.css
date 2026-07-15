@@ -1,0 +1,7 @@
+
+html, body, #root {
+  margin: calc(var(--header-size) / 2) 0px 0px 0px;
+  padding: 0;
+  font-family: Rubik, arial;
+}
+

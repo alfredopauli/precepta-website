@@ -1,0 +1,17 @@
+
+.authenticate-wrapper {
+  width: 100%;
+  height: calc(100vh - var(--header-size));
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.authenticate-wrapper form {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 10px;
+  align-items: center;
+  flex-direction: column;
+}
+

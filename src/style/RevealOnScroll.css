@@ -1,0 +1,11 @@
+
+.hidden {
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: opacity 2.0s, transform 1.0s cubic-bezier(0.34, 1.56, 0.64, 1);;
+}
+
+.show {
+  opacity: 1;
+  transform: translateX(0);
+}

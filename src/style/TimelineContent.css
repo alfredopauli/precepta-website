@@ -1,0 +1,28 @@
+
+.timeline-wrapper {
+  padding: 20px 10px 20px 10px;
+}
+
+.timeline-wrapper .table {
+  display: grid;
+  grid-template-rows: 50px repeat(8, auto);
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-flow: column;
+  gap: 0px;
+}
+
+.timeline-wrapper .table .weekday-timeline-element {
+  margin: 5px;
+  border: 2px solid gray;
+  display: grid;
+  grid-template-rows: auto 1fr;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.timeline-wrapper .table .weekday-timeline-element .duration {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+

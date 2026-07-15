@@ -1,0 +1,18 @@
+
+.add-new-class-form {
+  padding: 20px 0px;
+  display: flex;
+  width: 100%;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-direction: row;
+}
+
+.class-container-item {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  gap: 20px;
+}
+
+

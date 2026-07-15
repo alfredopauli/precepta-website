@@ -1,0 +1,41 @@
+
+:root {
+  --header-size: 70px;
+}
+
+.advertisement-wrapper {
+  position: fixed;
+  top: 70px;
+  left: 0px;
+  height: calc(100vh - var(--header-size));
+  padding: 50px;
+  background: #020024;
+  background: linear-gradient(10deg,rgba(2, 0, 36, 1) 0%, rgba(9, 9, 121, 1) 35%, rgba(0, 212, 255, 1) 100%);
+  color: white;
+  box-sizing: border-box;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+  align-items: center;
+}
+
+.advertisement-wrapper .text-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  transition: transform 0.5s;
+}
+
+.advertisement-wrapper .text-wrapper:hover {
+  transform: translate(0, -30px);
+}
+
+.advertisement-wrapper .image {
+  transition: transform 0.5s;
+}
+
+
+.advertisement-wrapper .image:hover {
+  transform: translate(0, -30px);
+}
+
