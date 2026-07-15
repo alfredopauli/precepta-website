@@ -4,9 +4,7 @@
 }
 
 .advertisement-wrapper {
-  position: static;
-  top: 70px;
-  left: 0px;
+  position: relative;
   height: calc(100vh - var(--header-size));
   padding: 50px;
   background: #020024;
