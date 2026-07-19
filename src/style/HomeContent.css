@@ -19,7 +19,7 @@
         rgba(0, 212, 255, 1) 100%
       );
     color: white;
-    padding: 50px;
+    padding: 20px;
     align-items: center;
     overflow: hidden;
   }
@@ -36,12 +36,16 @@
     object-position: center top;
     object-fit: cover;
   }
+
+  .top {
+    display: flex;
+    flex-direction: row;
+  }
   
   .content-wrapper .pannel {
     top: 0;
     display: flex;
     flex-direction: column;
-    justify-content: space-around;
     text-align: center;
     justify-content: center;
     transition: transform 0.5s;
@@ -93,15 +97,26 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    text-align: center;
+    align-items: center;
     transition: transform 0.5s;
   }
   
   .content-wrapper .pannel:hover {
     transform: translateY(-30px);
   }
+
+  .top {
+    display: flex;
+    flex-direction: row;
+  }
   
   .content-wrapper .pannel img {
     width: 10em;
+    border-radius: 30%;
+    overflow: hidden;
+    object-fit: cover;
+    object-position: center;
   }
 }
 

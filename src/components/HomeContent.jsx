@@ -13,16 +13,18 @@ const HomeContent = () => {
       </div>
       <RevealOnScroll>
         <div className="pannel">
-          <h1> 
-            Venha ser PRECEPTA também! 
-          </h1>
+          <div className="top">
+            <h1> 
+              Venha ser PRECEPTA também! 
+            </h1>
+            <div className="image-wrapper">
+              <img src={logo} />
+            </div>
+          </div>
           <h3> 
             Escolha um professor da maior escola online de reforço de São Paulo e comece agora 
             suas monitorias particulares.
           </h3>
-          <div className="image-wrapper">
-            <img src={logo} />
-          </div>
         </div>
       </RevealOnScroll>
     </div>
