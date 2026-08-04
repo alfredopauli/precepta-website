@@ -9,3 +9,10 @@
   opacity: 1;
   transform: translateX(0);
 }
+
+.hidden,
+.show {
+  position: relative; 
+  width: 100%;
+  height: 100%;
+}

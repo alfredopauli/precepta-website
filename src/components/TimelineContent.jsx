@@ -1,9 +1,6 @@
 import { weekdays } from '../database.js';
-
 import { useContext } from 'react';
-
 import { DataContext } from "../context/DataContext";
-
 import '../style/TimelineContent.css';
 
 
@@ -16,8 +13,13 @@ const TimelineContent = () => {
     data.forEach((element) => {
       if ((element.status) && (element.weekday == i) && (element.hour == h)) {
         classes.push(
-          <div style={{backgroundColor: element.color, padding: "0px 10px"}}>
-            {element.name}
+          <div className="professor" style={{backgroundColor: element.color}}>
+            <div className="name">
+              {element.name}
+            </div>
+            <div className="desc">
+              {element.desc}
+            </div>
           </div>
         )
       }
@@ -37,12 +39,14 @@ const TimelineContent = () => {
         let formated_end_h = string_end_h.slice(0,2) + ':' + string_end_h.slice(2,4);
         
         weekdays_options.push(
-          <div className="weekday-timeline-element">
-            <div className="duration">
-              {formated_h}-{formated_end_h}
-            </div> 
-            <div className="classes">
-              {getClassesFor(i, h)}
+          <div className="weekday-wrapper">
+            <div className="weekday-element">
+              <div className="duration">
+                {formated_h}-{formated_end_h}
+              </div> 
+              <div className="classes">
+                {getClassesFor(i, h)}
+              </div>
             </div>
           </div>
         );
@@ -50,7 +54,7 @@ const TimelineContent = () => {
 
       return (
         <>
-          <h3>{weekday}</h3>
+          <div className="weekday-name">{weekday}</div>
           {weekdays_options} 
         </>
       );
@@ -61,9 +65,7 @@ const TimelineContent = () => {
 
   return (
     <div className="timeline-wrapper">
-      <div className="table">
-          {getOptions()}
-      </div>
+      {getOptions()}
     </div>
   );
 }

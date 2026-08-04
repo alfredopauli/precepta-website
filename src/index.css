@@ -1,7 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
-html, body, #root {
-  margin: calc(var(--header-size) / 2) 0px 0px 0px;
-  padding: 0;
-  font-family: Rubik, arial;
+
+@media (max-width: 768px) {
+  html, body, #root {
+    margin: calc(var(--header-size) / 2) 0px 0px 0px;
+    padding: 0;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+  }
+}
+
+
+@media (min-width: 769px) {
+  html, body, #root {
+    margin: calc(var(--header-size) / 2) 0px 0px 0px;
+    padding: 0;
+    font-family: "Inter", sans-serif;
+    font-size: 16px;
+  }
 }
 
