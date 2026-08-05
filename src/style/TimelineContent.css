@@ -5,32 +5,49 @@
   top: var(--header-size);
   width: 100%;
   height: calc(100vh - var(--header-size));
-  display: grid;
-  grid-template-columns: repeat(6, 60vw);
-  grid-template-rows: 3em repeat(7, auto);
-  grid-auto-flow: column;
-  overflow-x: scroll;
   overflow-y: scroll;
+  overflow-x: auto;
   padding: 20px;
-  gap: 10px 20px;
   background: #020024; 
   background:
     linear-gradient(
       180deg,
-      #020024 0%,
-      rgba(9, 9, 121, 1), 95%, 
-      rgba(0, 212, 255, 1) 100%
+      rgb(0, 0, 50) 0%,
+      rgb(0, 0, 100), 80%, 
+      rgb(0, 100, 200) 100%
     );
+  padding-bottom: env(safe-area-inset-bottom, 20px);
 }
 
-.timeline-wrapper .weekday-name {
+.timeline-wrapper table {
+    width: max-content;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.timeline-wrapper table thead th {
+  position: sticky;
+  color: black;
+  background-color: white;
   padding: 10px;
   font-size: 1.5em;
   font-weight: bold;
-  display: flex;
-  align-items: center;
-  justify-content: center;  
-  color: white;
+  top: 0;
+  z-index: 1;
+}
+
+.timeline-wrapper table thead th:first-child {
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+}
+
+.timeline-wrapper table thead th:last-child {
+    border-top-right-radius: 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.timeline-wrapper table td {
+  padding: 10px;
 }
 
 .timeline-wrapper .weekday-element {
@@ -39,6 +56,7 @@
   height: auto;
   border-radius: 6px;
   background-color: white;
+  border: 5px solid white;
 }
 
 .timeline-wrapper .weekday-element .duration {
@@ -55,7 +73,6 @@
   gap: 5px;
   justify-content: space-between;
   height: auto;
-  overflow: scroll;
 }
 
 
@@ -78,17 +95,15 @@
   font-weight: bold;
 }
 
-
 @media (max-width: 768px) {
-  .timeline-wrapper {
-    grid-template-columns: repeat(6, 60vw);
+  .timeline-wrapper table th, 
+  .timeline-wrapper table td {
+    width: 65vw;
   }
 }
-
 
 @media (min-width: 769px) {
-  .timeline-wrapper {
-    grid-template-columns: repeat(6, 1fr);
+  .timeline-wrapper table {
+    width: 100%;
   }
 }
-

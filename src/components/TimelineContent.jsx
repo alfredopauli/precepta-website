@@ -35,18 +35,24 @@ const TimelineContent = () => {
     return classes;
   }
 
-  const getOptions = () => {
-    let table = weekdays.map((weekday, i) => {
-      let weekdays_options = []
+  const getTableHeader = () => {
+    return weekdays.map((element, _) => (
+      <th>{element}</th>
+    ));
+  }
 
-      for (let h=1400; h < 2100; h+=100) {
+  const getTableData = () => {
+    let rows = [];
+
+    for (let h=1400; h < 2100; h+=100) {
+      let columns = weekdays.map((_, i) => {
         let string_h = h.toString();
         let string_end_h = (h + 100).toString();
         let formated_h = string_h.slice(0,2) + ':' + string_h.slice(2,4);
         let formated_end_h = string_end_h.slice(0,2) + ':' + string_end_h.slice(2,4);
         
-        weekdays_options.push(
-          <div className="weekday-wrapper">
+        return (
+          <td>
             <div className="weekday-element">
               <div className="duration">
                 {formated_h}-{formated_end_h}
@@ -55,24 +61,29 @@ const TimelineContent = () => {
                 {getClassesFor(i, h)}
               </div>
             </div>
-          </div>
+          </td>
         );
-      }
+      });
 
-      return (
-        <>
-          <div className="weekday-name">{weekday}</div>
-          {weekdays_options} 
-        </>
-      );
-    });
+      rows.push(<tr>{columns}</tr>);
+    }
 
-    return table;
+    return rows;
   }
+
 
   return (
     <div className="timeline-wrapper">
-      {getOptions()}
+      <table>
+        <thead>
+          <tr>
+            {getTableHeader()}
+          </tr>
+        </thead>
+        <tbody>
+          {getTableData()}
+        </tbody>
+      </table>
     </div>
   );
 }
