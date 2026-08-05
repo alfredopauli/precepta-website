@@ -10,6 +10,7 @@
   grid-template-rows: 3em repeat(7, auto);
   grid-auto-flow: column;
   overflow-x: scroll;
+  overflow-y: scroll;
   padding: 20px;
   gap: 10px 20px;
   background: #020024; 
@@ -53,7 +54,6 @@
   flex-direction: column;
   gap: 5px;
   justify-content: space-between;
-  min-height: 0px;
   height: auto;
   overflow: scroll;
 }
