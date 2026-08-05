@@ -39,7 +39,7 @@ const TimelineContent = () => {
     let table = weekdays.map((weekday, i) => {
       let weekdays_options = []
 
-      for (let h=1400; h < 2200; h+=100) {
+      for (let h=1400; h < 2100; h+=100) {
         let string_h = h.toString();
         let string_end_h = (h + 100).toString();
         let formated_h = string_h.slice(0,2) + ':' + string_h.slice(2,4);

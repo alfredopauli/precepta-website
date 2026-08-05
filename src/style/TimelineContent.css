@@ -7,7 +7,7 @@
   height: calc(100vh - var(--header-size));
   display: grid;
   grid-template-columns: repeat(6, 60vw);
-  grid-template-rows: 3em repeat(8, auto);
+  grid-template-rows: 3em repeat(7, auto);
   grid-auto-flow: column;
   overflow-x: scroll;
   padding: 20px;

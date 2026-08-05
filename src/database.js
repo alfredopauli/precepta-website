@@ -15,8 +15,7 @@ export const time = [
   "17:00-18:00",
   "18:00-19:00",
   "19:00-20:00",
-  "20:00-21:00",
-  "21:00-22:00"
+  "20:00-21:00"
 ]
 
 export const fakedb = [
@@ -37,11 +36,11 @@ export const fakedb = [
   { status: 1, desc: "Matemática", name: "Renato", color: "rgb(100, 100, 255)", weekday: 2, hour: 1900 },
   { status: 1, desc: "Matemática", name: "Renato", color: "rgb(100, 100, 255)", weekday: 2, hour: 1900 },
   { status: 1, desc: "Matemática", name: "Renato", color: "rgb(100, 100, 255)", weekday: 2, hour: 1900 },
-  { status: 1, desc: "Matemática", name: "Renato", color: "rgb(100, 100, 255)", weekday: 2, hour: 2200 },
-  { status: 1, desc: "Matemática", name: "Renato", color: "rgb(100, 100, 255)", weekday: 2, hour: 2200 },
-  { status: 1, desc: "Matemática", name: "Renato", color: "rgb(100, 100, 255)", weekday: 3, hour: 2200 },
-  { status: 1, desc: "Matemática", name: "Renato", color: "rgb(100, 100, 255)", weekday: 4, hour: 2200 },
-  { status: 1, desc: "Matemática", name: "Renato", color: "rgb(100, 100, 255)", weekday: 5, hour: 2200 },
+  { status: 1, desc: "Matemática", name: "Renato", color: "rgb(100, 100, 255)", weekday: 2, hour: 2000 },
+  { status: 1, desc: "Matemática", name: "Renato", color: "rgb(100, 100, 255)", weekday: 2, hour: 2000 },
+  { status: 1, desc: "Matemática", name: "Renato", color: "rgb(100, 100, 255)", weekday: 3, hour: 2000 },
+  { status: 1, desc: "Matemática", name: "Renato", color: "rgb(100, 100, 255)", weekday: 4, hour: 2000 },
+  { status: 1, desc: "Matemática", name: "Renato", color: "rgb(100, 100, 255)", weekday: 5, hour: 2000 },
   { status: 1, desc: "Matemática", name: "Alessandra", color: "pink", weekday: 0, hour: 1900 },
   { status: 1, desc: "Matemática", name: "Alessandra", color: "pink", weekday: 1, hour: 1900 },
   { status: 1, desc: "Matemática", name: "Alessandra", color: "pink", weekday: 2, hour: 1900 },
