@@ -8,6 +8,17 @@ export const weekdays = [
   "Sábado"
 ];
 
+export const time = [
+  "14:00-15:00",
+  "15:00-16:00",
+  "16:00-17:00",
+  "17:00-18:00",
+  "18:00-19:00",
+  "19:00-20:00",
+  "20:00-21:00",
+  "21:00-22:00"
+]
+
 export const fakedb = [
   { status: 1, desc: "Matemática", name: "Renato", color: "rgb(100, 100, 255)", weekday: 0, hour: 1800 },
   { status: 1, desc: "Matemática", name: "Renato", color: "rgb(100, 100, 255)", weekday: 0, hour: 1800 },
@@ -52,6 +63,11 @@ export const fakedb = [
   { status: 1, desc: "Matemática", name: "Mauro", color: "rgb(100, 255, 100)", weekday: 1, hour: 1700 },
   { status: 1, desc: "Matemática", name: "Mauro", color: "rgb(100, 255, 100)", weekday: 1, hour: 1800 },
 ];
+
+//import { createClient } from "@supabase/supabase-js"
+// const supabaseUrl = import.meta.env.VITE_DB_URL;
+// const supabaseKey = import.meta.env.VITE_DB_KEY;
+// const supabase = createClient(supabaseUrl, supabaseKey);
 
 
 export default { fakedb, weekdays };

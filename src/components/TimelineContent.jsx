@@ -9,7 +9,6 @@ const TimelineContent = () => {
 
   const getClassesFor = (i, h) => {
     let classes = [];
-    
     data.forEach((element) => {
       if ((element.status) && (element.weekday == i) && (element.hour == h)) {
         classes.push(
@@ -24,6 +23,14 @@ const TimelineContent = () => {
         )
       }
     });
+
+    if (classes.length === 0) {
+      return (
+        <div className="no-classes">
+          Sem aulas
+        </div>
+      );
+    }
     
     return classes;
   }

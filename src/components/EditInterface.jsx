@@ -1,10 +1,8 @@
-import { weekdays } from '../database.js';
-
+import { weekdays, time } from '../database.js';
 import { useContext, useActionState } from 'react';
-
 import { DataContext } from "../context/DataContext";
-
 import '../style/EditInterface.css';
+import binIcon from '../assets/bin-icon.png';
 
 
 const EditInterface = () => {
@@ -14,6 +12,7 @@ const EditInterface = () => {
       const newData = {
         status: true,
         name: formData.get('name'),
+        desc: formData.get('desc'),
         color: formData.get('color'),
         weekday: formData.get('weekday'),
         hour: formData.get('hour'),
@@ -30,8 +29,8 @@ const EditInterface = () => {
     ));
   }
 
-  const handleNewData = (data) => {
-    setData((prev) => ([...prev, data]));
+  const deleteData = (removeIndex) => {
+    setData((prev) => prev.filter((_, index) => index !== removeIndex));
   }
 
   const getOptions = () => {
@@ -43,11 +42,13 @@ const EditInterface = () => {
       let formated_end_h = string_end_h.slice(0,2) + ':' + string_end_h.slice(2,4);
       
       return (
-        <div className="class-container-item" key={index}>
-          <p>Status</p>
-          <input type="checkbox" checked={element.status} onChange={() => handleToggle(index)}/>
-          <p>Nome: {element.name}</p>
-          <p>Horário: {formated_h}-{formated_end_h}</p>
+        <div className="class-item" style={{backgroundColor: element.color}} key={index}>
+          <input className="check" type="checkbox" checked={element.status} onChange={() => handleToggle(index)}/>
+          <div className="name">{element.name}</div>
+          <div className="hour">{formated_h}-{formated_end_h}</div>
+          <button className="button" onClick={() => deleteData(index)}>
+            <img className="button__image" src={binIcon}/>
+          </button>
         </div>
       );
     });
@@ -63,11 +64,25 @@ const EditInterface = () => {
     });
   }
 
+  const getTimeOptions = () => {
+    return time.map((element, _) => {
+      let value = Number(element.split("-")[0].replace(":", ""));
+      console.log(element);
+      return (
+        <option key={element} value={value}>
+          {element}
+        </option>
+      );
+    });
+  }
+
   return (
     <>
       <form className="add-new-class-form" action={submitAction}>
         <p>Nome</p>
         <input name="name" type="name" />
+        <p>Descrição</p>
+        <input name="desc" type="desc" />
         <p>Cor</p>
         <input name="color" type="color"/>
         <p>Dia da semana</p>
@@ -76,14 +91,7 @@ const EditInterface = () => {
         </select>
         <p>Horário</p>
         <select name="hour">
-          <option key="14:00-15:00" value="1400">14:00-15:00</option>
-          <option key="15:00-16:00" value="1400">15:00-16:00</option>
-          <option key="16:00-17:00" value="1400">16:00-17:00</option>
-          <option key="17:00-18:00" value="1400">17:00-18:00</option>
-          <option key="18:00-19:00" value="1400">18:00-19:00</option>
-          <option key="19:00-20:00" value="1400">19:00-20:00</option>
-          <option key="20:00-21:00" value="1400">20:00-21:00</option>
-          <option key="21:00-22:00" value="1400">21:00-22:00</option>
+          {getTimeOptions()}
         </select>
         <button>
           Adicionar
