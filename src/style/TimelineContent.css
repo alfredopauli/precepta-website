@@ -4,7 +4,7 @@
   position: fixed;
   top: var(--header-size);
   width: 100%;
-  height: calc(100vh - var(--header-size));
+  height: calc(100dvh - var(--header-size));
   overflow-y: scroll;
   overflow-x: auto;
   padding: 20px;
@@ -16,7 +16,6 @@
       rgb(0, 0, 100), 80%, 
       rgb(0, 100, 200) 100%
     );
-  padding-bottom: env(safe-area-inset-bottom, 20px);
 }
 
 .timeline-wrapper table {
@@ -28,7 +27,8 @@
 .timeline-wrapper table thead th {
   position: sticky;
   color: black;
-  background-color: white;
+  background: white;
+  box-shadow: 10px 10px 10px rgba(0,0,0,0.7);
   padding: 10px;
   font-size: 1.5em;
   font-weight: bold;
