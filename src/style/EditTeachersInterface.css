@@ -1,0 +1,55 @@
+
+.edit-wrapper {
+  /* Position */
+  box-sizing: border-box;
+  position: fixed;
+  top: calc(2*var(--header-size));
+  height: calc(100dvh - 2*var(--header-size));
+  /* Dimensions */
+  width: 100%;
+  padding: 20px;
+  /* Child organization */
+  align-items: center;
+}
+
+.add-new-teacher-form {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 100px;
+  width: 100%;
+  gap: 10px;
+  justify-content: space-evenly;
+}
+
+.teacher-container {
+  height: 100%;
+  overflow: scroll;  
+}
+
+.teacher-item {
+  border: black solid 1px;
+  margin: 10px 0px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  gap: 20px;
+  text-align: center;
+}
+
+.teacher-item .name {
+  flex: 2;
+}
+
+.teacher-item .hour {
+  flex: 1;
+}
+
+.teacher-item .button img {
+  width: 1.5em;
+  height: 1.5em;
+}
+
+

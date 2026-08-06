@@ -1,6 +1,6 @@
 import { useContext } from 'react'
-import { Link } from 'react-router-dom'
-import { AuthContext } from "../context/AuthContext";
+import { Link, useNavigate } from 'react-router-dom'
+import { useAuth } from "../context/AuthContext";
 
 // Import images.
 import logo from '../assets/precepta-icon.png';
@@ -11,7 +11,17 @@ import '../style/Header.css';
 
 
 const Header = () => {
-  const { session, setSession } = useContext(AuthContext);
+  const { session, setSession, signOut } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async (e) => {
+    e.preventDefault();
+    navigate("/");
+    const { success, error } = await signOut();
+    if (!success) {
+      setError(error.message);
+    }
+  }
 
   return (
     <header>
@@ -24,14 +34,19 @@ const Header = () => {
             Cronograma
           </Link>
           {session && (
-            <Link to="/editar" className="link" >
+            <Link to="/editarAulas" className="link" >
               Editar
             </Link>
           )}
         </div>
-        <div className="auth-wrapper">
+        <div className="auth-wrapper"> 
           { session && (
-            `Olá, ${session?.name}!`
+            <>
+              <p>Olá, {session?.user?.email}!</p>
+              <button onClick={handleSignOut}>
+                Sair
+              </button>
+            </>
           )}
           <Link to="/autenticar" className="auth-icon">
             <img src={authIcon} />

@@ -1,30 +1,91 @@
-import { weekdays } from '../database.js';
-import { useContext } from 'react';
-import { DataContext } from "../context/DataContext";
+import { useState, useEffect, useActionState } from 'react';
+import { weekdays, times } from '../common.js';
+import supabase from '../supabase-client.js';
 import '../style/TimelineContent.css';
 
 
 const TimelineContent = () => {
-  const { data, setData } = useContext(DataContext);
+  const [classes, setClasses] = useState([]) 
+  const [teachers, setTeachers] = useState([]) 
+
+  useEffect(() => {
+    fetchData();
+
+    const channel = supabase
+      .channel("ideal_changes")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "teachers",
+        },
+        (_) => {
+          fetchData();
+        }
+      )
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "classes",
+        },
+        (_) => {
+          fetchData();
+        }
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, []);
+
+  async function fetchData() {
+    try {
+      // Fetch 'classes' data
+      const { data: newClasses, error: errorClasses } = 
+        await supabase
+          .from('classes')
+          .select('*')
+          .order("weekday", { ascending: true })
+          .order("hour", { ascending: true })
+          .order('teacher_id');
+      if (errorClasses) throw errorClasses;
+      
+      // Fetch 'teachers' data
+      const { data: newTeachers, error: errorTeachers } = 
+        await supabase.from('teachers').select('*')
+      if (errorTeachers) throw errorTeachers;
+
+      setClasses(newClasses);
+      setTeachers(newTeachers);
+    } catch (error) {
+        console.error(error.message);
+    }
+  }
+
 
   const getClassesFor = (i, h) => {
-    let classes = [];
-    data.forEach((element) => {
+    let c = [];
+    classes.forEach((element) => {
       if ((element.status) && (element.weekday == i) && (element.hour == h)) {
-        classes.push(
-          <div className="professor" style={{backgroundColor: element.color}}>
+        let teacher = teachers.filter((teacher) => teacher.id === element.teacher_id)[0];
+        c.push(
+          <div key={element.id} className="professor" style={{backgroundColor: teacher.color}}>
             <div className="name">
-              {element.name}
+              {teacher.name}
             </div>
             <div className="desc">
-              {element.desc}
+              {teacher.desc}
             </div>
           </div>
         )
       }
     });
 
-    if (classes.length === 0) {
+    if (c.length === 0) {
       return (
         <div className="no-classes">
           Sem aulas
@@ -32,7 +93,7 @@ const TimelineContent = () => {
       );
     }
     
-    return classes;
+    return c;
   }
 
   const getTableHeader = () => {
@@ -44,18 +105,16 @@ const TimelineContent = () => {
   const getTableData = () => {
     let rows = [];
 
-    for (let h=1400; h < 2100; h+=100) {
+    for (let h=14; h < 21; h++) {
       let columns = weekdays.map((_, i) => {
-        let string_h = h.toString();
-        let string_end_h = (h + 100).toString();
-        let formated_h = string_h.slice(0,2) + ':' + string_h.slice(2,4);
-        let formated_end_h = string_end_h.slice(0,2) + ':' + string_end_h.slice(2,4);
+        let string_h = h.toString() + ':00';
+        let string_end_h = (h + 1).toString() + ':00';
         
         return (
           <td>
-            <div className="weekday-element">
+            <div key={i.ToString + "-" + string_h} className="weekday-element">
               <div className="duration">
-                {formated_h}-{formated_end_h}
+                {string_h}-{string_end_h}
               </div> 
               <div className="classes">
                 {getClassesFor(i, h)}
