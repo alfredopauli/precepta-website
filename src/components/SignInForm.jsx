@@ -1,13 +1,12 @@
 import { useNavigate } from 'react-router-dom';
 import { useActionState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import "../style/SignInForm.css";
 
 
 const SignInForm = () => {
-  const { signInUser } = useAuth(); 
+  const { session, signInUser } = useAuth(); 
   const navigate = useNavigate();
-
-  const { session } = useAuth;
   
   const [error, submitAction, isPending] = useActionState(
     async (previousState, formData) => {
@@ -36,17 +35,12 @@ const SignInForm = () => {
   );
 
   return (
-    <div className="sign-form-container">
+    <div className="signin-form-container">
       <form
         action={submitAction}
         aria-label="Sign in form"
         aria-describedby="form-description"
       >
-        <div id="form-description" className="sr-only">
-          Use this form to sign in to your acount. Enter your email and password. 
-        </div>
-        <h2 className="form-title">Sign in</h2>
-        
         <label htmlFor="email">Email</label>
         <input
           className="form-input"
@@ -59,7 +53,6 @@ const SignInForm = () => {
           aria-describedby={error ? "signin-error" : undefined}
           disabled={isPending}
         />
-        
         <label htmlFor="password">Password</label>
         <input
           className="form-input"
@@ -72,7 +65,6 @@ const SignInForm = () => {
           aria-describedby={error ? "signin-error" : undefined}
           disabled={isPending}
         />
-         
         <button 
           type="submit"
           className="form-button"
@@ -80,7 +72,6 @@ const SignInForm = () => {
         >
           {isPending ? "Signing in" : "Sign in"}
         </button>
-
         {error && (
           <div
             id="signin-error"

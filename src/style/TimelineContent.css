@@ -110,5 +110,6 @@
 @media (min-width: 769px) {
   .timeline-wrapper table {
     width: 100%;
+    table-layout: fixed;
   }
 }

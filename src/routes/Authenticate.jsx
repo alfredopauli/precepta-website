@@ -6,9 +6,7 @@ const Authenticate = () => {
   return (
     <>
       <Header />
-      <div className="authenticate-wrapper">
-        <SignInForm />
-      </div>
+      <SignInForm />
     </>
   );
 }
