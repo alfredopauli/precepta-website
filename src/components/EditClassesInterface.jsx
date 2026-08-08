@@ -1,6 +1,6 @@
 import { useState, useEffect, useActionState } from 'react';
 import '../style/EditClassesInterface.css';
-import { weekdays, times } from '../common.js';
+import { weekdays, hours } from '../common.js';
 import binIcon from '../assets/bin-icon.png';
 import supabase from '../supabase-client.js'
 
@@ -125,12 +125,14 @@ const EditClassesInterface = () => {
       
       return (
         <div className="class-item" style={{backgroundColor: teacher.color}} key={index}>
-          <input 
-            className="check" 
-            type="checkbox" 
-            checked={element.status} 
-            onChange={() => toggleClass(element.id)}
-          />
+          <div className="check-wrapper">
+            <input 
+              className="check" 
+              type="checkbox" 
+              checked={element.status} 
+              onChange={() => toggleClass(element.id)}
+            />
+          </div>
           <div className="name">{teacher.name}</div>
           <div className="hour">{string_start}-{string_end}</div>
           <button className="button" onClick={() => deleteClass(element.id)}>
@@ -158,7 +160,7 @@ const EditClassesInterface = () => {
   }
     
   const getTimeOptions = () => {
-    return times.map((element, _) => {
+    return hours.map((element, _) => {
       let value = Number(element.split("-")[0].slice(0, 2));
       return (
         <option key={element} value={value}>
@@ -187,8 +189,10 @@ const EditClassesInterface = () => {
           Adicionar
         </button>
       </form>
-      <div className="class-container">
-        {getOptions()}
+      <div className="class-container-wrapper">
+        <div className="class-container">
+          {getOptions()}
+        </div>
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
-import { useState, useEffect, useActionState } from 'react';
-import { weekdays, times } from '../common.js';
+import { Fragment, useState, useEffect } from 'react';
+import { weekdays, hours, prohibited_hours } from '../common.js';
 import supabase from '../supabase-client.js';
 import '../style/TimelineContent.css';
 
@@ -78,54 +78,75 @@ const TimelineContent = () => {
               {teacher.name}
             </div>
             <div className="desc">
-              {teacher.desc}
+              {teacher.desc.replaceAll(' ', '').split(';').map((subject, index) => (
+                <Fragment key={subject}>
+                  {subject}<br /> 
+                </Fragment>
+              ))}
             </div>
           </div>
         )
       }
     });
-
-    if (c.length === 0) {
-      return (
-        <div className="no-classes">
-          Sem aulas
-        </div>
-      );
-    }
-    
+ 
     return c;
   }
 
   const getTableHeader = () => {
     return weekdays.map((element, _) => (
-      <th>{element}</th>
+      <th key={element}>{element}</th>
     ));
   }
 
   const getTableData = () => {
-    let rows = [];
+    let rows = hours.map((hour, _) => {
+      let empty = true;
 
-    for (let h=14; h < 21; h++) {
       let columns = weekdays.map((_, i) => {
-        let string_h = h.toString() + ':00';
-        let string_end_h = (h + 1).toString() + ':00';
-        
+        let value = Number(hour.split("-")[0].slice(0, 2));
+        let c = getClassesFor(i, value);
+        empty = empty && (c.length === 0);
+
+        let should_collapse = 
+          (c.length === 0) ||
+          prohibited_hours.some(
+            elem => (elem.weekday === i && elem.hour === hour)
+          ) 
+
+        //{ 
+        //  (c.length === 0) ? (
+        //    <div className="no-classes">
+        //      Sem aulas
+        //    </div>
+        //  ) : (
+        //    c
+        //  )
+        //}
+
         return (
-          <td>
-            <div key={i.ToString + "-" + string_h} className="weekday-element">
+          <td key={i.toString() + "-" + hour}>
+            <div
+              className="weekday-element"
+              style={ should_collapse ? {visibility: "collapse"} : {} }
+            >
               <div className="duration">
-                {string_h}-{string_end_h}
+                {hour}
               </div> 
               <div className="classes">
-                {getClassesFor(i, h)}
+                {c}
               </div>
             </div>
           </td>
         );
       });
 
-      rows.push(<tr>{columns}</tr>);
-    }
+      return <tr 
+          key={hour}
+          style={ empty ? {visibility: "collapse"} : {}}
+        >
+          {columns}
+        </tr>;
+    });
 
     return rows;
   }

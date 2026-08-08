@@ -75,7 +75,7 @@
 .timeline-wrapper .weekday-element .classes {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 10px;
   justify-content: space-between;
   height: auto;
 }
@@ -93,10 +93,13 @@
   border-radius: 5px;
   padding: 5px;
   display: flex;
+  gap: 10px;
   justify-content: space-between;
 }
 
 .timeline-wrapper .weekday-element .classes .professor .name {
+  display: flex;
+  align-items: center;
   font-weight: bold;
 }
 

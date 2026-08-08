@@ -1,6 +1,8 @@
 
 .edit-wrapper {
   /* Position */
+  display: flex;
+  flex-direction: column;
   box-sizing: border-box;
   position: fixed;
   top: calc(2*var(--header-size));
@@ -22,9 +24,15 @@
   gap: 10px;
 }
 
+.class-container-wrapper {
+  padding-right: 10px;
+  width: 100%;
+  overflow-y: auto;  
+}
+
 .class-container {
-  height: 100%;
-  overflow: scroll;  
+  border: 1px solid black;
+  border-radius: 10px;
 }
 
 .class-item {
@@ -34,17 +42,19 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  width: 100%;
   gap: 20px;
   text-align: center;
 }
 
-.class-item .name {
-  flex: 2;
+.check-wrapper {
+  margin: 0 0 0 10px;
+  border: 3px solid white;
+  border-radius: 3px;
+  background-color: white;
 }
 
-.class-item .hour {
-  flex: 1;
+.check-wrapper input {
+  margin: 0px;
 }
 
 .class-item .button img {

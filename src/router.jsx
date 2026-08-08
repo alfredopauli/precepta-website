@@ -15,7 +15,7 @@ export const router = createBrowserRouter([
     element: <Home />
   },
   {
-    path: "/cronograma",
+    path: "/gradehoraria",
     element: <Timeline />
   },
   {

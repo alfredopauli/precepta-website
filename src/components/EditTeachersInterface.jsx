@@ -1,7 +1,6 @@
-import { weekdays, times } from '../common.js';
 import supabase from '../supabase-client.js'
 import { useEffect, useState, useActionState } from 'react';
-import '../style/EditTeachersInterface.css';
+import '../style/EditClassesInterface.css';
 import binIcon from '../assets/bin-icon.png';
 
 
@@ -94,20 +93,9 @@ const EditTeachersInterface = () => {
     });
   }
   
-  const getTimeOptions = () => {
-    return times.map((element, _) => {
-      let value = Number(element.split("-")[0].replace(":", ""));
-      return (
-        <option key={element} value={value}>
-          {element}
-        </option>
-      );
-    });
-  }
-
   return (
     <div className="edit-wrapper">
-      <form className="add-new-teacher-form" action={submitAction}>
+      <form className="add-new-class-form" action={submitAction}>
         <p>Nome</p>
         <input name="name" type="name" />
         <p>Descrição</p>
@@ -122,8 +110,10 @@ const EditTeachersInterface = () => {
           Adicionar
         </button>
       </form>
-      <div className="teacher-container">
-        {getOptions()}
+      <div className="class-container-wrapper">
+        <div className="class-container">
+          {getOptions()}
+        </div>
       </div>
     </div>
   );

@@ -30,8 +30,8 @@ const Header = () => {
             <img src={logo}/>
         </Link>
         <div className="links-wrapper">
-          <Link to="/cronograma" className="link" >
-            Cronograma
+          <Link to="/gradehoraria" className="link" >
+            Grade Horária
           </Link>
           {session && (
             <Link to="/editarAulas" className="link" >
