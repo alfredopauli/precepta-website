@@ -108,7 +108,7 @@ const TimelineContent = () => {
         empty = empty && (c.length === 0);
 
         let should_collapse = 
-          (c.length === 0) ||
+          //(c.length === 0) ||
           prohibited_hours.some(
             elem => (elem.weekday === i && elem.hour === hour)
           ) 
@@ -133,7 +133,15 @@ const TimelineContent = () => {
                 {hour}
               </div> 
               <div className="classes">
-                {c}
+                { 
+                  (c.length === 0) ? (
+                    <div className="no-classes">
+                      Sem aulas
+                    </div>
+                  ) : (
+                    c
+                  )
+                }
               </div>
             </div>
           </td>

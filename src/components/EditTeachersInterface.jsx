@@ -1,11 +1,20 @@
 import supabase from '../supabase-client.js'
 import { useEffect, useState, useActionState } from 'react';
-import '../style/EditClassesInterface.css';
+import '../style/EditInterface.css';
 import binIcon from '../assets/bin-icon.png';
 
 
 const EditTeachersInterface = () => {
   const [teachers, setTeachers] = useState([]) 
+  
+  const [name, setName] = useState('')
+  const [desc, setDesc] = useState('')
+  const [color, setColor] = useState(
+    "#" +
+      Math.floor(Math.random() * 16777215)
+        .toString(16)
+        .padStart(6, "0")
+  );
 
   useEffect(() => {
     fetchData();
@@ -55,7 +64,6 @@ const EditTeachersInterface = () => {
         desc: formData.get('desc'),
         color: formData.get('color')
       }
-      console.log(newData);
       
       const { error } = await supabase.from("teachers").insert(newData);
 
@@ -83,8 +91,10 @@ const EditTeachersInterface = () => {
     return teachers.map((element, index) => {
       return (
         <div className="class-item" style={{backgroundColor: element.color}} key={index}>
-          <div className="name">{element.name}</div>
-          <div className="desc">{element.desc}</div>
+          <div className="info-wrapper">
+            <div className="name">{element.name}</div>
+            <div className="desc">{element.desc}</div>
+          </div>
           <button className="button" onClick={() => deleteTeacher(element.id)}>
             <img className="button__image" src={binIcon}/>
           </button>
@@ -97,16 +107,27 @@ const EditTeachersInterface = () => {
     <div className="edit-wrapper">
       <form className="add-new-class-form" action={submitAction}>
         <p>Nome</p>
-        <input name="name" type="name" />
+        <input 
+          name="name" 
+          type="text" 
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
         <p>Descrição</p>
-        <input name="desc" type="name"/>
+        <input 
+          name="desc" 
+          type="text"
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+        />
         <p>Cor</p>
         <input 
           name="color" 
           type="color" 
-          defaultValue={'#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0')}
+          value={color}
+          onChange={(e) => setColor(e.target.value)}
         />
-        <button>
+        <button type="submit">
           Adicionar
         </button>
       </form>

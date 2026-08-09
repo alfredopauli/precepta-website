@@ -1,5 +1,5 @@
 import { useState, useEffect, useActionState } from 'react';
-import '../style/EditClassesInterface.css';
+import '../style/EditInterface.css';
 import { weekdays, hours } from '../common.js';
 import binIcon from '../assets/bin-icon.png';
 import supabase from '../supabase-client.js'
@@ -8,6 +8,10 @@ import supabase from '../supabase-client.js'
 const EditClassesInterface = () => {
   const [classes, setClasses] = useState([]) 
   const [teachers, setTeachers] = useState([]) 
+
+  const [teacherID, setTeacherID] = useState(null);
+  const [weekday, setWeekday] = useState(null);
+  const [hour, setHour] = useState(null);
 
   useEffect(() => {
     fetchData();
@@ -51,9 +55,9 @@ const EditClassesInterface = () => {
         await supabase
           .from('classes')
           .select('*')
+          .order('teacher_id')
           .order("weekday", { ascending: true })
-          .order("hour", { ascending: true })
-          .order('teacher_id');
+          .order("hour", { ascending: true });
       if (errorClasses) throw errorClasses;
       
       // Fetch 'teachers' data
@@ -122,7 +126,7 @@ const EditClassesInterface = () => {
       let string_start = h.toString() + ':00';
       let string_end = (h + 1).toString() + ':00';
       let teacher = teachers.filter((teacher) => teacher.id === element.teacher_id)[0];
-      
+
       return (
         <div className="class-item" style={{backgroundColor: teacher.color}} key={index}>
           <div className="check-wrapper">
@@ -133,8 +137,11 @@ const EditClassesInterface = () => {
               onChange={() => toggleClass(element.id)}
             />
           </div>
-          <div className="name">{teacher.name}</div>
-          <div className="hour">{string_start}-{string_end}</div>
+          <div className="info-wrapper">
+            <div className="name">{teacher.name}</div>
+            <div className="weekday">{weekdays[element.weekday]}</div>
+            <div className="hour">{string_start}-{string_end}</div>
+          </div>
           <button className="button" onClick={() => deleteClass(element.id)}>
             <img className="button__image" src={binIcon}/>
           </button>
@@ -174,15 +181,27 @@ const EditClassesInterface = () => {
     <div className="edit-wrapper">
       <form className="add-new-class-form" action={submitAction}>
         <p>Professor</p>
-        <select name="teacher">
+        <select 
+          name="teacher"
+          value={teacherID}
+          onChange={(e) => setTeacherID(e.target.value)}
+        >
           {getTeacherOptions()}
           </select>
         <p>Dia da semana</p>
-        <select name="weekday">
+        <select 
+          name="weekday"
+          value={weekday}
+          onChange={(e) => setWeekday(e.target.value)}
+        >
           {getWeekdayOptions()}
         </select>
         <p>Horário</p>
-        <select name="hour">
+        <select
+          name="hour"
+          value={hour}
+          onChange={(e) => setHour(e.target.value)}
+        >
           {getTimeOptions()}
         </select>
         <button>
