@@ -1,0 +1,136 @@
+
+h1 {
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 1em;
+  margin-bottom: 1em;
+}
+
+h2 {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-bottom: 1em;
+}
+
+p {
+  margin-bottom: 1em;
+}
+
+ul {
+  text-align: left;
+  list-style: circle;
+  list-style-position: outside;
+  padding-left: 40px;
+  margin-bottom: 1em;
+}
+
+.announce-wrapper h1, 
+.announce-wrapper h2, 
+.announce-wrapper p {
+  margin-top: 0px;
+  margin-bottom: 0px;
+}
+
+.announce-wrapper {
+  display: flex;
+  text-align: center;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+}
+
+.announce {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: white;
+  border-radius: 20px;
+  font-weight: bold;
+  align-items: center;
+  
+  background:
+    var(--grainy-image),
+    radial-gradient(
+      ellipse at center,
+      transparent 0%,
+      transparent 50%,
+      rgb(255, 255, 255, 0.05) 100%
+    ),
+    radial-gradient(
+      circle at right,
+      white 0%,
+      rgb(100, 100, 100) 50%
+    ),
+    var(--announce-color);
+  background-blend-mode: overlay, normal, multiply;
+}
+
+.announce button {
+  width: 50%; 
+}
+
+.moreabout-wrapper {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+:root {
+  --image-percentage: 50%;
+}
+
+.image-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.moreabout-wrapper .image-wrapper img {
+  position: relative;
+  z-index: 1;
+  width: 110%;
+  height: auto;
+}
+
+.moreabout-wrapper .image-wrapper .background {
+  z-index: 0;
+  position: absolute;
+  top: calc(100% - var(--image-percentage));
+  left: 0;
+  width: 100%;
+  height: var(--image-percentage);
+  background-color: rgb(0, 127, 255);
+}
+
+.moreabout-wrapper .image-wrapper .fade-in {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  background: linear-gradient(
+    to bottom, 
+    rgba(0, 127, 255, 0) var(--image-percentage), 
+    rgba(0, 127, 255, 1) 100%
+  );
+}
+
+.moreabout-wrapper .content {
+  text-align: center;
+  padding: 20px;
+  color: white;
+  background-color: rgb(0, 127, 255);
+}
+
+
