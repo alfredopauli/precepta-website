@@ -1,4 +1,4 @@
-import './style/Reset.css';
+import './reset.css';
 import './index.css';
 
 import { StrictMode } from 'react'

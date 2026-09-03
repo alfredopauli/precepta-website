@@ -1,22 +1,30 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
 
-
-@media (max-width: 768px) {
-  html, body, #root {
-    margin: calc(var(--header-size) / 2) 0px 0px 0px;
-    padding: 0;
-    font-family: "Inter", sans-serif;
-    font-size: 14px;
-  }
+:root {
+  --header-height: 3em;
+  --header-padding: 0.6em;
+  --menu-cover-percentage: 60%;
+  --grainy-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'><filter id='noise'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23noise)' opacity='.5'/></svg>")
 }
 
+html {
+  margin: calc(var(--header-size)) 0px 0px 0px;
+  font-family: "Inter", sans-serif;
+  font-size: 18px;
 
-@media (min-width: 769px) {
-  html, body, #root {
-    margin: calc(var(--header-size) / 2) 0px 0px 0px;
-    padding: 0;
-    font-family: "Inter", sans-serif;
-    font-size: 16px;
-  }
+  background:
+    var(--grainy-image),
+    radial-gradient(
+      ellipse at center,
+      transparent 0%,
+      transparent 50%,
+      rgb(255, 255, 255, 0.05) 100%
+    ),
+    radial-gradient(
+      circle at bottom,
+      white 0%,
+      rgb(100, 100, 100) 50%
+    ),
+    rgb(0, 127, 255);
+  
+  background-blend-mode: overlay, normal, multiply;
 }
-

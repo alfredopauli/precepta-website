@@ -46,3 +46,17 @@ table {
 	border-collapse: collapse;
 	border-spacing: 0;
 }
+
+.btn-reset {
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: inherit;
+  outline: none;
+  appearance: none; /* Removes native OS platform styling */
+  -webkit-appearance: none;
+}

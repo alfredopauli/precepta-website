@@ -1,61 +1,39 @@
-import { useContext } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { useAuth } from "../context/AuthContext";
-
-// Import images.
-import logo from '../assets/precepta-icon.png';
-import authIcon from '../assets/auth-icon.png';
-
-// Import styles.
 import '../style/Header.css';
+
+import preceptaIcon from '../assets/precepta-icon.png';
+import menuIcon from '../assets/menu-icon-black.png';
+
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 
 const Header = () => {
-  const { session, setSession, signOut } = useAuth();
-  const navigate = useNavigate();
-
-  const handleSignOut = async (e) => {
-    e.preventDefault();
-    navigate("/");
-    const { success, error } = await signOut();
-    if (!success) {
-      setError(error.message);
-    }
-  }
+  const [ menuOpen, setMenuOpen ] = useState();
 
   return (
     <header>
-      <nav>
-        <Link to="/" className="home-wrapper">
-            <img src={logo}/>
-        </Link>
-        <div className="links-wrapper">
-          <Link to="/gradehoraria" className="link" >
-            Grade Horária
-          </Link>
-          {session && (
-            <Link to="/editarAulas" className="link" >
-              Editar
-            </Link>
-          )}
-        </div>
-        <div className="auth-wrapper"> 
-          { session && (
-            <>
-              <p>Olá, {session?.user?.email}!</p>
-              <button onClick={handleSignOut}>
-                Sair
-              </button>
-            </>
-          )}
-          <Link to="/autenticar" className="auth-icon">
-            <img src={authIcon} />
-          </Link>
-        </div>
+      <Link to='/'>
+        <img src={preceptaIcon} />
+      </Link>
+      
+      <button 
+        className='menu-button btn-reset'
+        onClick={() => (setMenuOpen(!menuOpen))}
+      >
+        <img src={menuIcon} /> 
+      </button>
+
+      <nav className={menuOpen ? 'open' : 'closed'}>
+        <ul>
+          <li>Grade horária</li>
+          <li>Planos</li>
+        </ul>
       </nav>
     </header>
-  );
-}
+  )
+};
+
 
 export default Header;
+
 
