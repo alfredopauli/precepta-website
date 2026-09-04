@@ -27,7 +27,7 @@ const HomeContent = () => {
             </div>
           </div>
           <div className="bottom-text">
-            Escolha um professor da maior escola online de reforço de São Paulo e comece agora 
+            Escolha um professor da maior escola online de apoio pedagógico de São Paulo e comece agora 
             suas monitorias particulares.
           </div>
         </div>

@@ -161,17 +161,26 @@ const TimelineContent = () => {
 
 
   return (
-    <div className="timeline-wrapper">
-      <table>
-        <thead>
-          <tr>
-            {getTableHeader()}
-          </tr>
-        </thead>
-        <tbody>
-          {getTableData()}
-        </tbody>
-      </table>
+    <div className="container">
+      <div className="advice">
+        <div className="message">
+          <p style={{'font-weight': 'bold'}}>Escolheu seu horário?</p>
+          <p>Mande uma mensagem no nosso WhatsApp!</p>
+          <a href="https://wa.me/5511991723096">(11) 99172-3096 <i class="fa-brands fa-whatsapp"></i></a>
+        </div>
+      </div>
+      <div className="timeline-wrapper">
+        <table>
+          <thead>
+            <tr>
+              {getTableHeader()}
+            </tr>
+          </thead>
+          <tbody>
+            {getTableData()}
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }
