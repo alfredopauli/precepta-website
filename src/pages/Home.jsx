@@ -1,13 +1,102 @@
-import { Link } from 'react-router-dom';
-import { ArrowRight, Atom, BookOpen, Sparkles } from 'lucide-react';
-import { about, history } from '../data/content';
-import { Blocks, ExternalLink } from '../components/UI';
-import { whatsapp } from '../lib/domain';
-function ScienceArt() { return <div className="science-art" aria-hidden="true"><div className="art-grid"/><span className="formula f1">E = mc²</span><span className="formula f2">∫ f(x) dx</span><span className="formula f3">a² + b² = c²</span><div className="orbit"><Atom strokeWidth={.8}/></div><div className="art-book"><span/><span/><span/><BookOpen/></div><div className="art-label">A curiosidade é só o começo. <Sparkles size={16}/></div><div className="art-dot d1"/><div className="art-dot d2"/><span className="art-star">✳</span></div>; }
-export default function Home() { return <>
-  <section className="hero"><div className="hero-copy"><span className="eyebrow"><span className="tiny-dot"/> EDUCAÇÃO ONLINE, CONEXÃO DE VERDADE</span><h1>Aprender abre<br/><em>novos mundos.</em></h1><p>Do primeiro porquê ao próximo grande desafio. Aulas e acompanhamento para aprender com confiança, no seu ritmo.</p><div className="actions"><Link className="button" to="/servicos">Encontre seu caminho <ArrowRight size={18}/></Link><Link className="text-link" to="/grade-horaria">Ver horários <ArrowRight size={17}/></Link></div><div className="hero-caption"><span>Fundamental</span><span>Médio</span><span>Superior e além</span></div></div><ScienceArt/></section>
-  <div className="principles"><span><BookOpen size={19}/> Conhecimento para a vida</span><span><Atom size={19}/> Professores de universidades públicas</span><span><Sparkles size={19}/> Aprendizado com propósito</span></div>
-  <section className="section about"><div><span className="eyebrow">QUEM SOMOS</span><h2>Grandes descobertas.<br/><em>Um passo de cada vez.</em></h2><div className="number-note"><strong>1000+ h</strong><span>de aulas ministradas</span></div></div><div><Blocks blocks={about}/><Link className="text-link" to="/servicos">Conheça nossos serviços <ArrowRight size={17}/></Link></div></section>
-  <section className="section history"><div><span className="eyebrow">NOSSA HISTÓRIA · DESDE 2019</span><h2>O amor por conhecer.<br/>A vontade de ensinar.</h2><div className="founder-note"><span>ML</span><p><strong>Prof. Mauro Lucas</strong><br/>Físico e fundador da Precepta</p></div></div><div><Blocks blocks={history}/></div></section>
-  <section className="cta-panel"><span className="eyebrow">SEU PRÓXIMO PASSO</span><h2>Uma dúvida hoje.<br/>Uma descoberta amanhã.</h2><p>Conte com a Precepta para construir seu caminho de aprendizado.</p><div className="actions"><Link className="button" to="/grade-horaria">Explore a grade horária <ArrowRight size={18}/></Link><ExternalLink className="text-link" href={whatsapp()}>Converse com a gente</ExternalLink></div></section>
-  </>; }
+import { Link } from "react-router-dom";
+import Orbit from "../components/Orbit";
+import Copy from "../components/Copy";
+import content from "../data/content.json";
+import { WHATSAPP } from "../lib/domain";
+export default function Home() {
+  return (
+    <>
+      <section className="hero">
+        <div className="hero-copy">
+          <img
+            className="hero-logo"
+            src="/assets/logo-horizontal.svg"
+            alt="Precepta — Educação, Cultura e Arte"
+          />
+          <span className="eyebrow">CONHECIMENTO QUE ABRE CAMINHOS</span>
+          <h1>
+            Aprender é descobrir
+            <br />
+            novas <em>possibilidades.</em>
+          </h1>
+          <p>
+            Aulas online e apoio pedagógico para acompanhar cada etapa da sua
+            jornada.
+          </p>
+          <div className="actions">
+            <Link className="button primary" to="/servicos">
+              Conheça os serviços <span>↗</span>
+            </Link>
+            <Link className="text-link" to="/grade">
+              Ver horários →
+            </Link>
+          </div>
+        </div>
+        <Orbit />
+      </section>
+      <div className="fact-strip">
+        <span>
+          <b>Desde 2019</b>Compartilhando conhecimento
+        </span>
+        <span>
+          <b>Mais de 1.000 h</b>De aulas ministradas
+        </span>
+        <span>
+          <b>Ensino online</b>Do Fundamental ao Superior
+        </span>
+      </div>
+      <section className="editorial">
+        <div>
+          <span className="eyebrow">01 / QUEM SOMOS</span>
+          <h2>
+            O seu próximo passo
+            <br />
+            começa com <em>apoio.</em>
+          </h2>
+        </div>
+        <div>
+          <Copy text={content.who} />
+          <Link className="text-link" to="/servicos">
+            Encontre o apoio que você precisa ↗
+          </Link>
+        </div>
+      </section>
+      <section className="editorial history">
+        <div>
+          <span className="eyebrow">02 / NOSSA HISTÓRIA</span>
+          <h2>
+            Uma escola que nasce
+            <br />
+            do amor por <em>ensinar.</em>
+          </h2>
+          <span className="year">
+            2019<span>O início da nossa história</span>
+          </span>
+        </div>
+        <div>
+          {content.history.map((p) => (
+            <p key={p}>{p}</p>
+          ))}
+        </div>
+      </section>
+      <section className="contact-band">
+        <div>
+          <span className="eyebrow">VAMOS CONVERSAR?</span>
+          <h2>
+            Há um caminho para
+            <br />
+            cada jeito de aprender.
+          </h2>
+        </div>
+        <a
+          className="button primary"
+          href={WHATSAPP}
+          target="_blank"
+          rel="noreferrer"
+        >
+          Fale com a Precepta ↗
+        </a>
+      </section>
+    </>
+  );
+}

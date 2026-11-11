@@ -1,13 +1,52 @@
-import React, { lazy, Suspense } from 'react';
-import { createRoot } from 'react-dom/client';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { AuthProvider, Protected } from './auth/AuthProvider';
-import Layout from './components/Layout';
-import Home from './pages/Home';
-import Services from './pages/Services';
-import Timetable from './pages/Timetable';
-import Login from './pages/Login';
-const Admin = lazy(() => import('./pages/Admin'));
-const validate = event => { const field = event.target; if (!field.validity) return; field.setCustomValidity(''); if (field.validity.valueMissing) field.setCustomValidity('Preencha este campo.'); else if (field.validity.typeMismatch) field.setCustomValidity('Informe um e-mail válido.'); else if (field.validity.rangeUnderflow || field.validity.rangeOverflow || field.validity.stepMismatch) field.setCustomValidity('Informe uma hora inteira entre 0 e 23.'); };
-import './styles/main.css';
-createRoot(document.getElementById('root')).render(<React.StrictMode><div onInvalidCapture={validate} onInputCapture={e => e.target.setCustomValidity?.('')}><Suspense fallback={<p role="status">Carregando…</p>}><BrowserRouter><AuthProvider><Routes><Route element={<Layout/>}><Route index element={<Home/>}/><Route path="servicos" element={<Services/>}/><Route path="grade-horaria" element={<Timetable/>}/><Route path="entrar" element={<Login/>}/><Route path="admin/professores" element={<Protected><Admin key="teachers" type="teachers"/></Protected>}/><Route path="admin/classes" element={<Protected><Admin key="classes" type="classes"/></Protected>}/><Route path="*" element={<><h1>Página não encontrada</h1><Link to="/">Voltar ao início</Link></>}/></Route></Routes></AuthProvider></BrowserRouter></Suspense></div></React.StrictMode>);
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { AuthProvider } from "./auth/AuthProvider";
+import Layout from "./components/Layout";
+import Home from "./pages/Home";
+import Services from "./pages/Services";
+import Timetable from "./pages/Timetable";
+import Login from "./pages/Login";
+import Admin, { Protected } from "./pages/Admin";
+import "./styles.css";
+createRoot(document.getElementById("root")).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <AuthProvider>
+        <Routes>
+          <Route element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="servicos" element={<Services />} />
+            <Route path="grade" element={<Timetable />} />
+            <Route path="entrar" element={<Login />} />
+            <Route
+              path="admin/professores"
+              element={
+                <Protected>
+                  <Admin key="teachers" kind="teachers" />
+                </Protected>
+              }
+            />
+            <Route
+              path="admin/classes"
+              element={
+                <Protected>
+                  <Admin key="classes" kind="classes" />
+                </Protected>
+              }
+            />
+            <Route
+              path="*"
+              element={
+                <>
+                  <h1>Página não encontrada</h1>
+                  <Link to="/">Voltar ao início</Link>
+                </>
+              }
+            />
+          </Route>
+        </Routes>
+      </AuthProvider>
+    </BrowserRouter>
+  </React.StrictMode>,
+);

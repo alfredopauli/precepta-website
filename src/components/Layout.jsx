@@ -1,44 +1,240 @@
-import { useEffect, useRef, useState } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
-import { Home, BookOpen, CalendarDays, LogIn, Users, SlidersHorizontal, PanelLeftClose, Menu, X, LogOut, ArrowUpRight, Instagram, Facebook, Youtube } from 'lucide-react';
-import { useAuth } from '../auth/AuthProvider';
-import { whatsapp } from '../lib/domain';
-import { ExternalLink } from './UI';
+import { useState, useEffect, useRef } from "react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
+import {
+  FiHome,
+  FiGrid,
+  FiCalendar,
+  FiLogIn,
+  FiUsers,
+  FiEdit3,
+  FiLogOut,
+  FiMenu,
+  FiArrowLeft,
+} from "react-icons/fi";
+import {
+  FaInstagram,
+  FaFacebookF,
+  FaYoutube,
+  FaWhatsapp,
+} from "react-icons/fa";
+import { useAuth } from "../auth/AuthProvider";
+import { WHATSAPP } from "../lib/domain";
+import { Notice } from "./Shared";
 export default function Layout() {
-  const [collapsed, setCollapsed] = useState(false);
-  const [open, setOpen] = useState(false);
-  const sidebar = useRef(null), trigger = useRef(null);
-  const location = useLocation();
-  const auth = useAuth();
-  useEffect(() => { setOpen(false); document.getElementById('main')?.focus(); window.scrollTo(0, 0); }, [location.pathname]);
+  const [open, setOpen] = useState(false),
+    [collapsed, setCollapsed] = useState(false),
+    [mobile, setMobile] = useState(
+      () => matchMedia("(max-width: 760px)").matches,
+    ),
+    [error, setError] = useState(""),
+    [busy, setBusy] = useState(false);
+  const auth = useAuth(),
+    location = useLocation(),
+    drawer = useRef(),
+    toggle = useRef(),
+    main = useRef();
   useEffect(() => {
-    if (!open) return;
-    const previous = document.activeElement;
-    const focusables = () => [...sidebar.current.querySelectorAll('a,button')].filter(el => el.getClientRects().length);
-    focusables()[0]?.focus();
-    const keydown = e => {
-      if (e.key === 'Escape') setOpen(false);
-      if (e.key === 'Tab') { const nodes = focusables(), first = nodes[0], last = nodes.at(-1); if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); } else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); } }
+    const m = matchMedia("(max-width: 760px)");
+    const fn = () => {
+      setMobile(m.matches);
+      setOpen(false);
     };
-    document.addEventListener('keydown', keydown); document.body.style.overflow = 'hidden';
-    return () => { document.removeEventListener('keydown', keydown); document.body.style.overflow = ''; if (previous?.isConnected) previous.focus(); };
-  }, [open]);
-  const links = [['/', 'Início', Home], ['/servicos', 'Serviços', BookOpen], ['/grade-horaria', 'Grade Horária', CalendarDays], ['/entrar', 'Entrar', LogIn]];
-  if (auth.admin && !auth.loading) links.push(['/admin/professores', 'Editar Professores', Users], ['/admin/classes', 'Editar Classes', SlidersHorizontal]);
-  return <div className={`layout ${collapsed ? 'collapsed' : ''}`}>
-    <a href="#main" className="skip">Pular para o conteúdo</a>
-    <button ref={trigger} className="mobile-trigger icon-button" onClick={() => setOpen(true)} aria-label="Abrir menu" aria-expanded={open} aria-controls="sidebar"><Menu/></button>
-    {open && <div className="backdrop" onClick={() => setOpen(false)} aria-hidden="true"/>}
-    <aside ref={sidebar} id="sidebar" className={`sidebar ${open ? 'open' : ''}`} role={open ? 'dialog' : undefined} aria-modal={open || undefined} aria-label="Menu principal">
-      <div className="brand"><img src={collapsed ? '/assets/logo.png' : '/assets/logo-horizontal.svg'} alt="Precepta — Educação, Cultura e Arte"/></div>
-      <button className="mobile-close icon-button" onClick={() => setOpen(false)} aria-label="Fechar menu"><X/></button>
-      <span className="nav-caption">APRENDER TRANSFORMA</span>
-      <nav aria-label="Navegação principal">{links.map(([to, label, Icon]) => <NavLink key={to} to={to} end={to === '/'} title={collapsed ? label : undefined}><Icon size={20} aria-hidden="true"/><span>{label}</span></NavLink>)}</nav>
-      <div className="sidebar-bottom"><div className="sidebar-note"><span className="tiny-dot"/> Conhecimento que aproxima.<p>Online, com você.<br/>Em cada descoberta.</p><ExternalLink href={whatsapp()}>Vamos conversar</ExternalLink></div>
-      {auth.user && <button className="nav-action" onClick={auth.logout}><LogOut size={19}/><span>Sair</span></button>}
-      <button className="collapse-button nav-action" onClick={() => setCollapsed(!collapsed)} aria-label={collapsed ? 'Expandir menu' : 'Recolher menu'}><PanelLeftClose size={19}/><span>Recolher menu</span></button></div>
-    </aside>
-    <div className="main-wrap" inert={open ? true : undefined}><main id="main" tabIndex={-1}>{auth.error && <p className="notice" role="alert">{auth.error}</p>}<Outlet/></main>
-    <footer><div><img src="/assets/logo-horizontal.svg" alt="Precepta Educação"/><p>Educação, cultura e arte.<br/>Novas possibilidades começam aqui.</p></div><div><strong>Vamos conversar?</strong><a href="tel:+5511991723096">(11) 99172-3096</a><ExternalLink href={whatsapp()}>Fale pelo WhatsApp</ExternalLink></div><div><strong>Acompanhe a Precepta</strong><div className="social"><ExternalLink href="https://www.instagram.com/preceptaeduca/"><Instagram aria-hidden="true"/><span className="sr-only">Instagram</span></ExternalLink><ExternalLink href="https://www.facebook.com/preceptaeduca/"><Facebook aria-hidden="true"/><span className="sr-only">Facebook</span></ExternalLink><ExternalLink href="https://www.youtube.com/@preceptaeduca"><Youtube aria-hidden="true"/><span className="sr-only">YouTube</span></ExternalLink></div></div><small>© {new Date().getFullYear()} Precepta Educação</small></footer></div>
-  </div>;
+    m.addEventListener("change", fn);
+    return () => m.removeEventListener("change", fn);
+  }, []);
+  useEffect(() => {
+    setOpen(false);
+    window.scrollTo(0, 0);
+    document.title = `${{ "/": "Início", "/servicos": "Serviços", "/grade": "Grade Horária", "/entrar": "Entrar", "/admin/professores": "Editar Professores", "/admin/classes": "Editar Classes" }[location.pathname] || "Página não encontrada"} | Precepta Educação`;
+    main.current?.focus();
+  }, [location.pathname]);
+  useEffect(() => {
+    if (!open || !mobile) return;
+    const previous = document.activeElement;
+    drawer.current.querySelector("button")?.focus();
+    const old = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handler = (e) => {
+      if (e.key === "Escape") {
+        setOpen(false);
+        return;
+      }
+      if (e.key === "Tab") {
+        const els = drawer.current.querySelectorAll("a,button:not(:disabled)");
+        const first = els[0],
+          last = els[els.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener("keydown", handler);
+    return () => {
+      document.body.style.overflow = old;
+      document.removeEventListener("keydown", handler);
+      previous?.focus();
+    };
+  }, [open, mobile]);
+  const links = [
+    ["/", "Início", FiHome],
+    ["/servicos", "Serviços", FiGrid],
+    ["/grade", "Grade Horária", FiCalendar],
+    ...(!auth.user ? [["/entrar", "Entrar", FiLogIn]] : []),
+    ...(auth.admin
+      ? [
+          ["/admin/professores", "Editar Professores", FiUsers],
+          ["/admin/classes", "Editar Classes", FiEdit3],
+        ]
+      : []),
+  ];
+  async function logout() {
+    setBusy(true);
+    setError("");
+    try {
+      await auth.logout();
+    } catch (e) {
+      setError(e.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  return (
+    <div className={`app ${collapsed ? "collapsed" : ""}`}>
+      <a href="#main" className="skip">
+        Pular para o conteúdo
+      </a>
+      {mobile && (
+        <button
+          className="mobile-toggle"
+          ref={toggle}
+          onClick={() => setOpen(true)}
+          aria-label="Abrir menu"
+          aria-expanded={open}
+          aria-controls="sidebar"
+        >
+          <FiMenu />
+        </button>
+      )}
+      {open && mobile && (
+        <div className="backdrop" onClick={() => setOpen(false)} />
+      )}
+      <aside
+        id="sidebar"
+        ref={drawer}
+        className={`sidebar ${open ? "open" : ""}`}
+        inert={mobile && !open ? true : undefined}
+        role={mobile && open ? "dialog" : undefined}
+        aria-modal={mobile && open ? true : undefined}
+        aria-label="Menu de navegação"
+      >
+        <button
+          className="collapse-toggle"
+          onClick={() => (mobile ? setOpen(false) : setCollapsed(!collapsed))}
+          aria-label={
+            mobile
+              ? "Fechar menu"
+              : collapsed
+                ? "Expandir menu"
+                : "Recolher menu"
+          }
+          aria-expanded={mobile ? open : !collapsed}
+        >
+          <FiArrowLeft />
+        </button>
+        <NavLink className="brand" to="/" aria-label="Precepta — Início">
+          <img src="/assets/logo.png" alt="Precepta Educação" />
+        </NavLink>
+        <div className="nav-label">EXPLORE SEU POTENCIAL</div>
+        <nav aria-label="Navegação principal">
+          {links.map(([path, label, Icon]) => (
+            <NavLink end={path === "/"} key={path} to={path} title={label}>
+              <Icon aria-hidden="true" />
+              <span>{label}</span>
+            </NavLink>
+          ))}
+          {auth.user && (
+            <button onClick={logout} disabled={busy} title="Sair">
+              <FiLogOut />
+              <span>{busy ? "Saindo…" : "Sair"}</span>
+            </button>
+          )}
+        </nav>
+        <div className="sidebar-bottom">
+          <p>
+            O conhecimento
+            <br />
+            transforma caminhos.
+          </p>
+          <a
+            href={WHATSAPP}
+            target="_blank"
+            rel="noreferrer"
+            className="sidebar-contact"
+            title="WhatsApp"
+          >
+            <FaWhatsapp />
+            <span>Vamos conversar</span>
+          </a>
+          <small>Educação · Cultura · Arte</small>
+        </div>
+      </aside>
+      <div className="main-wrap" inert={mobile && open ? true : undefined}>
+        <main id="main" ref={main} tabIndex="-1">
+          {error && <Notice error>{error}</Notice>}
+          <Outlet />
+        </main>
+        <footer>
+          <div>
+            <strong>Precepta Educação</strong>
+            <p>
+              Educação, cultura e arte.
+              <br />
+              Conhecimento para novas possibilidades.
+            </p>
+          </div>
+          <div className="footer-contact">
+            <a href="tel:+5511991723096">Telefone: (11) 99172-3096</a>
+            <a href={WHATSAPP} target="_blank" rel="noreferrer">
+              <FaWhatsapp /> WhatsApp: (11) 99172-3096
+            </a>
+            <div className="socials">
+              {[
+                [
+                  FaInstagram,
+                  "Instagram",
+                  "https://www.instagram.com/preceptaeduca/",
+                ],
+                [
+                  FaFacebookF,
+                  "Facebook",
+                  "https://www.facebook.com/preceptaeduca/",
+                ],
+                [
+                  FaYoutube,
+                  "YouTube",
+                  "https://www.youtube.com/@preceptaeduca",
+                ],
+              ].map(([Icon, name, url]) => (
+                <a
+                  key={name}
+                  href={url}
+                  target="_blank"
+                  rel="noreferrer"
+                  aria-label={`${name}: preceptaeduca`}
+                  title={`${name}: preceptaeduca`}
+                >
+                  <Icon />
+                </a>
+              ))}
+              <span>@preceptaeduca</span>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+  );
 }

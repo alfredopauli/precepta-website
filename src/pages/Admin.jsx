@@ -1,44 +1,387 @@
-import { useEffect, useRef, useState } from 'react';
-import { Pencil, Trash2, Plus, X } from 'lucide-react';
-import { getTeachers, getClasses, saveRecord, deleteRecord } from '../lib/api';
-import { DAYS, availability, timeRange, filterClasses } from '../lib/domain';
-import { Feedback, Heading } from '../components/UI';
-const emptyTeacher = { name: '', desc: '', color: '#3a589e' };
-const emptyClass = { teacher_id: '', weekday: '0', hour: '14', status: 'false' };
-const emptyFilters = { teacher_id: '', weekday: '', hour: '' };
-export default function Admin({ type }) {
- const isTeacher = type === 'teachers';
- const [rows, setRows] = useState([]), [teachers, setTeachers] = useState([]), [loading, setLoading] = useState(true), [error, setError] = useState(''), [success, setSuccess] = useState(''), [busy, setBusy] = useState(false), [editing, setEditing] = useState(null), [form, setForm] = useState(isTeacher ? emptyTeacher : emptyClass), [showForm, setShowForm] = useState(false), [deleting, setDeleting] = useState(null), [filters, setFilters] = useState(emptyFilters);
- const dialog = useRef(null), firstField = useRef(null), formPanel = useRef(null), mounted = useRef(true), requestLock = useRef(false);
- useEffect(() => { mounted.current = true; return () => { mounted.current = false; }; }, []);
- async function load() { setLoading(true); try { const teacherData = await getTeachers(); const data = isTeacher ? teacherData : await getClasses(); if (mounted.current) { setTeachers(teacherData); setRows(data); } } catch { if (mounted.current) setError('Não foi possível carregar os registros. Verifique sua conexão e sua permissão.'); } finally { if (mounted.current) setLoading(false); } }
- useEffect(() => { load(); }, []);
- useEffect(() => { if (showForm) { firstField.current?.focus(); formPanel.current?.scrollIntoView({ block: 'nearest' }); } }, [showForm, editing]);
- useEffect(() => { if (deleting) dialog.current?.showModal(); else dialog.current?.close(); }, [deleting]);
- const change = e => setForm(s => ({ ...s, [e.target.name]: e.target.value }));
- function edit(row) { setEditing(row?.id ?? null); setForm(row ? isTeacher ? { name: row.name, desc: row.desc ?? '', color: row.color } : { teacher_id: String(row.teacher_id), weekday: String(row.weekday), hour: String(row.hour), status: String(row.status) } : isTeacher ? emptyTeacher : emptyClass); setShowForm(true); setError(''); setSuccess(''); }
- async function submit(e) {
-  e.preventDefault(); if (requestLock.current) return;
-  if (isTeacher && (!form.name.trim() || !form.desc.trim() || !CSS.supports('color', form.color) || /^(inherit|initial|unset|revert|currentcolor)$/i.test(form.color.trim()) || /var\(/i.test(form.color))) { setError('Preencha nome, descrição e uma cor CSS válida, como #3a589e, royalblue ou rgb(58, 88, 158).'); return; }
-  if (!isTeacher && (!teachers.some(t => String(t.id) === form.teacher_id) || !Number.isInteger(Number(form.hour)) || Number(form.hour) < 0 || Number(form.hour) > 23 || !DAYS[Number(form.weekday)])) { setError('Selecione professor, dia e uma hora inteira entre 0 e 23.'); return; }
-  requestLock.current = true; setBusy(true); setError(''); setSuccess('');
-  try {
-   const values = isTeacher ? { name: form.name.trim(), desc: form.desc.trim(), color: form.color.trim() } : { teacher_id: form.teacher_id, weekday: Number(form.weekday), hour: Number(form.hour), status: form.status === 'true' };
-   await saveRecord(type, editing, values);
-   if (!mounted.current) return;
-   setSuccess(editing == null ? 'Registro criado com sucesso.' : 'Alterações salvas com sucesso.'); setShowForm(false); setEditing(null); await load();
-  } catch { if (mounted.current) setError('Não foi possível salvar. Verifique sua conexão e sua permissão e tente novamente.'); } finally { requestLock.current = false; if (mounted.current) setBusy(false); }
- }
- async function confirmDelete() {
-  if (requestLock.current) return; requestLock.current = true; setBusy(true); setError(''); setSuccess('');
-  try { await deleteRecord(type, deleting.id); if (!mounted.current) return; setDeleting(null); if (editing === deleting.id) setShowForm(false); setSuccess('Registro excluído com sucesso.'); await load(); } catch { if (mounted.current) { setDeleting(null); setError('Não foi possível excluir. Verifique sua conexão e sua permissão.'); } } finally { requestLock.current = false; if (mounted.current) setBusy(false); }
- }
- const visibleRows = isTeacher ? rows : filterClasses(rows, filters);
- return <><Heading eyebrow="ADMINISTRAÇÃO" title={isTeacher ? 'Editar Professores' : 'Editar Classes'}>{isTeacher ? 'Cuide de quem faz o conhecimento acontecer.' : 'Organize os horários e a disponibilidade das aulas avulsas.'}</Heading><div className="admin-toolbar"><button className="button" onClick={() => edit(null)} disabled={loading || busy || (!isTeacher && !teachers.length)}><Plus size={18}/>{isTeacher ? 'Adicionar professor' : 'Adicionar classe'}</button><button disabled={loading || busy} onClick={() => { setError(''); load(); }}>Atualizar lista</button></div><Feedback loading={loading} error={error} success={success}/>{!isTeacher && !loading && !teachers.length && <p className="notice">Cadastre um professor antes de criar classes.</p>}
- {showForm && <section ref={formPanel} className="form-panel"><div className="panel-heading"><h2>{editing == null ? 'Novo registro' : 'Editar registro'}</h2><button className="icon-button" onClick={() => setShowForm(false)} disabled={busy} aria-label="Fechar formulário"><X/></button></div><form onSubmit={submit}><fieldset disabled={busy}>{isTeacher ? <><label>Nome<input ref={firstField} name="name" value={form.name} onChange={change} required/></label><label>Descrição<textarea name="desc" value={form.desc} onChange={change} rows="4" required/></label><label>Cor CSS<input name="color" value={form.color} onChange={change} required aria-describedby="color-help"/></label><p id="color-help" className="hint"><span className="color-preview" style={{ backgroundColor: form.color }}/>Exemplos: #3a589e, royalblue, rgb(58, 88, 158).</p></> : <div className="form-grid"><label>Professor<select ref={firstField} name="teacher_id" value={form.teacher_id} onChange={change} required><option value="">Selecione um professor</option>{teachers.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}</select></label><label>Dia da semana<select name="weekday" value={form.weekday} onChange={change}>{DAYS.map((d, i) => <option key={d} value={i}>{d}</option>)}</select></label><label>Hora de início<input name="hour" type="number" min="0" max="23" step="1" value={form.hour} onChange={change} required/></label><label>Disponibilidade<select name="status" value={form.status} onChange={change}><option value="false">Disponível</option><option value="true">Indisponível</option></select></label><p className="hint">Cada aula dura 50 minutos. É permitido cadastrar aulas no mesmo dia e horário.</p></div>}<div className="actions"><button className="button">{busy ? 'Salvando…' : 'Salvar'}</button><button type="button" onClick={() => setShowForm(false)}>Cancelar</button></div></fieldset></form></section>}
- {!isTeacher && <section className="filters" aria-label="Filtros de classes"><label>Professor<select value={filters.teacher_id} onChange={e => setFilters(f => ({ ...f, teacher_id: e.target.value }))}><option value="">Todos os professores</option>{teachers.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}</select></label><label>Dia da semana<select value={filters.weekday} onChange={e => setFilters(f => ({ ...f, weekday: e.target.value }))}><option value="">Todos os dias</option>{DAYS.map((d, i) => <option key={d} value={i}>{d}</option>)}</select></label><label>Hora<select value={filters.hour} onChange={e => setFilters(f => ({ ...f, hour: e.target.value }))}><option value="">Todas as horas</option>{Array.from({ length: 24 }, (_, i) => <option key={i} value={i}>{String(i).padStart(2, '0')}h00</option>)}</select></label><button onClick={() => setFilters(emptyFilters)}>Limpar filtros</button></section>}
- {!loading && !visibleRows.length && <p className="empty-state">{rows.length ? 'Nenhuma classe corresponde aos filtros selecionados.' : 'Nenhum registro cadastrado.'}</p>}
- <div className="record-list">{visibleRows.map(row => <article className="record" key={row.id}><div>{isTeacher ? <><h2><span className="color-preview" style={{ backgroundColor: row.color }}/>{row.name}</h2><p>{row.desc}</p></> : <><h2>{row.teachers?.name || 'Professor não encontrado'}</h2><p>{DAYS[row.weekday]} · {timeRange(row.hour)}</p><span className={`badge ${row.status ? 'unavailable' : ''}`}>{availability(row.status)}</span></>}</div><div className="record-actions"><button onClick={() => edit(row)} disabled={busy} aria-label={`Editar ${isTeacher ? row.name : `aula ${row.id}`}`}><Pencil size={16}/>Editar</button><button className="danger" onClick={() => setDeleting(row)} disabled={busy} aria-label={`Excluir ${isTeacher ? row.name : `aula ${row.id}`}`}><Trash2 size={16}/>Excluir</button></div></article>)}</div>
- <dialog ref={dialog} onCancel={e => { if (busy) e.preventDefault(); else setDeleting(null); }} aria-labelledby="delete-title"><h2 id="delete-title">Excluir {isTeacher ? 'professor' : 'classe'}?</h2><p>{isTeacher ? `O professor ${deleting?.name ?? ''} e todas as suas classes associadas serão excluídos.` : 'Esta classe será excluída da grade horária.'} Esta ação não pode ser desfeita.</p><div className="actions"><button autoFocus disabled={busy} onClick={() => setDeleting(null)}>Cancelar</button><button className="button destructive" disabled={busy} onClick={confirmDelete}>{busy ? 'Excluindo…' : 'Confirmar exclusão'}</button></div></dialog>
- </>;
+import { useState } from "react";
+import { Navigate } from "react-router-dom";
+import { useAuth } from "../auth/AuthProvider";
+import useData from "../lib/useData";
+import { mutate } from "../lib/api";
+import { DAYS, timeRange, classPayload, filterClasses } from "../lib/domain";
+import { Notice, PageHeading, ConfirmDialog } from "../components/Shared";
+export function Protected({ children }) {
+  const auth = useAuth();
+  if (auth.loading) return <Notice>Verificando acesso administrativo…</Notice>;
+  if (!auth.user) return <Navigate to="/entrar" replace />;
+  if (!auth.admin)
+    return (
+      <Notice error>
+        {auth.error ||
+          "Acesso negado. Sua conta não tem permissão de administrador."}
+      </Notice>
+    );
+  return children;
+}
+const emptyTeacher = { name: "", desc: "", color: "#3a589e" };
+const emptyClass = {
+  teacher_id: "",
+  weekday: "0",
+  hour: "14",
+  status: "false",
+};
+const emptyFilters = { teacher_id: "", weekday: "", hour: "" };
+export default function Admin({ kind }) {
+  const isTeachers = kind === "teachers";
+  const { teachers, classes, loading, error, reload } = useData();
+  const [form, setForm] = useState(null),
+    [busy, setBusy] = useState(false),
+    [message, setMessage] = useState(""),
+    [failure, setFailure] = useState(""),
+    [deleting, setDeleting] = useState(null),
+    [filters, setFilters] = useState(emptyFilters);
+  const update = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const open = (item) => {
+    setFailure("");
+    setMessage("");
+    setForm(
+      item
+        ? { ...item, ...(!isTeachers && { status: String(item.status) }) }
+        : { ...(isTeachers ? emptyTeacher : emptyClass) },
+    );
+    requestAnimationFrame(() =>
+      document.getElementById("editor")?.scrollIntoView({ block: "start" }),
+    );
+  };
+  async function save(e) {
+    e.preventDefault();
+    setFailure("");
+    setMessage("");
+    let payload;
+    try {
+      if (isTeachers) {
+        if (
+          !form.name.trim() ||
+          !form.desc.trim() ||
+          !form.color.trim() ||
+          !CSS.supports("color", form.color.trim())
+        )
+          throw new Error("Preencha nome, descrição e uma cor CSS válida.");
+        payload = {
+          name: form.name.trim(),
+          desc: form.desc.trim(),
+          color: form.color.trim(),
+        };
+      } else {
+        payload = classPayload(form);
+        if (!teachers.some((t) => String(t.id) === String(payload.teacher_id)))
+          throw new Error("Selecione um professor existente.");
+      }
+    } catch (e) {
+      setFailure(e.message);
+      return;
+    }
+    setBusy(true);
+    try {
+      await mutate(
+        kind,
+        form.id != null ? "update" : "insert",
+        payload,
+        form.id,
+      );
+      setMessage("Alteração salva com sucesso.");
+      setForm(null);
+      await reload();
+    } catch (e) {
+      setFailure(e.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+  async function remove() {
+    setBusy(true);
+    setFailure("");
+    setMessage("");
+    try {
+      await mutate(kind, "delete", null, deleting.id);
+      setMessage("Exclusão concluída com sucesso.");
+      if (form?.id === deleting.id) setForm(null);
+      setDeleting(null);
+      await reload();
+    } catch (e) {
+      setFailure(e.message);
+      setDeleting(null);
+    } finally {
+      setBusy(false);
+    }
+  }
+  const list = isTeachers ? teachers : filterClasses(classes, filters);
+  return (
+    <>
+      <PageHeading
+        eyebrow="ADMINISTRAÇÃO"
+        title={isTeachers ? "Editar Professores" : "Editar Classes"}
+      >
+        {isTeachers
+          ? "Gerencie os professores e suas informações."
+          : "Gerencie todos os horários e sua disponibilidade."}
+      </PageHeading>
+      <div className="actions">
+        <button className="primary" disabled={busy} onClick={() => open()}>
+          {isTeachers ? "Adicionar professor" : "Adicionar classe"} +
+        </button>
+      </div>
+      {message && <Notice>{message}</Notice>}
+      {failure && <Notice error>{failure}</Notice>}
+      {form && (
+        <form id="editor" className="form-panel" onSubmit={save}>
+          <h2>
+            {form.id != null ? "Editar" : "Adicionar"}{" "}
+            {isTeachers ? "professor" : "classe"}
+          </h2>
+          <fieldset disabled={busy}>
+            {isTeachers ? (
+              <>
+                <label htmlFor="name">Nome</label>
+                <input
+                  autoFocus
+                  id="name"
+                  name="name"
+                  required
+                  value={form.name}
+                  onChange={update}
+                />
+                <label htmlFor="desc">Descrição</label>
+                <textarea
+                  id="desc"
+                  name="desc"
+                  required
+                  rows="4"
+                  value={form.desc}
+                  onChange={update}
+                />
+                <label htmlFor="color">Cor</label>
+                <input
+                  id="color"
+                  name="color"
+                  type="color"
+                  required
+                  value={form.color}
+                  onChange={update}
+                  aria-describedby="color-help"
+                />
+              </>
+            ) : (
+              <>
+                <label htmlFor="teacher">Professor</label>
+                <select
+                  autoFocus
+                  id="teacher"
+                  name="teacher_id"
+                  required
+                  value={form.teacher_id}
+                  onChange={update}
+                >
+                  <option value="">Selecione um professor</option>
+                  {teachers.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </select>
+                {!teachers.length && (
+                  <Notice>
+                    Cadastre um professor antes de adicionar uma classe.
+                  </Notice>
+                )}
+                <label htmlFor="weekday">Dia da semana</label>
+                <select
+                  id="weekday"
+                  name="weekday"
+                  value={form.weekday}
+                  onChange={update}
+                >
+                  {DAYS.map((d, i) => (
+                    <option key={d} value={i}>
+                      {d}
+                    </option>
+                  ))}
+                </select>
+                <label htmlFor="hour">Hora de início (0–23)</label>
+                <input
+                  id="hour"
+                  name="hour"
+                  type="number"
+                  min="0"
+                  max="23"
+                  step="1"
+                  required
+                  value={form.hour}
+                  onChange={update}
+                />
+                <small>
+                  Horário:{" "}
+                  {form.hour !== "" ? timeRange(form.hour) : "Selecione a hora"}{" "}
+                  · duração de 50 minutos
+                </small>
+                <label htmlFor="status">Disponibilidade</label>
+                <select
+                  id="status"
+                  name="status"
+                  value={form.status}
+                  onChange={update}
+                >
+                  <option value="false">Disponível</option>
+                  <option value="true">Indisponível</option>
+                </select>
+              </>
+            )}
+            <div className="actions">
+              <button className="primary" type="submit">
+                {busy ? "Salvando…" : "Salvar"}
+              </button>
+              <button type="button" onClick={() => setForm(null)}>
+                Cancelar
+              </button>
+            </div>
+          </fieldset>
+        </form>
+      )}
+      {!isTeachers && (
+        <div className="filters">
+          <label>
+            Professor
+            <select
+              value={filters.teacher_id}
+              onChange={(e) =>
+                setFilters({ ...filters, teacher_id: e.target.value })
+              }
+            >
+              <option value="">Todos</option>
+              {teachers.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Dia da semana
+            <select
+              value={filters.weekday}
+              onChange={(e) =>
+                setFilters({ ...filters, weekday: e.target.value })
+              }
+            >
+              <option value="">Todos</option>
+              {DAYS.map((d, i) => (
+                <option key={d} value={i}>
+                  {d}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label>
+            Hora
+            <select
+              value={filters.hour}
+              onChange={(e) => setFilters({ ...filters, hour: e.target.value })}
+            >
+              <option value="">Todas</option>
+              {Array.from({ length: 24 }, (_, h) => (
+                <option key={h} value={h}>
+                  {timeRange(h)}
+                </option>
+              ))}
+            </select>
+          </label>
+          <button onClick={() => setFilters(emptyFilters)}>
+            Limpar filtros
+          </button>
+        </div>
+      )}
+      {loading ? (
+        <Notice>Carregando dados…</Notice>
+      ) : error ? (
+        <>
+          <Notice error>{error}</Notice>
+          <button onClick={reload}>Tentar novamente</button>
+        </>
+      ) : !list.length ? (
+        <Notice>
+          {isTeachers
+            ? "Nenhum professor cadastrado."
+            : classes.length
+              ? "Nenhuma classe corresponde aos filtros."
+              : "Nenhuma classe cadastrada."}
+        </Notice>
+      ) : (
+        <div className="admin-list">
+          {list.map((item) => (
+            <article className="admin-row" key={item.id}>
+              <div>
+                {isTeachers ? (
+                  <>
+                    <h3>
+                      <span
+                        className="dot"
+                        style={{
+                          background: CSS.supports("color", item.color)
+                            ? item.color
+                            : "#3a589e",
+                        }}
+                      />
+                      {item.name}
+                    </h3>
+                    <p>{item.desc}</p>
+                    <small>{item.color}</small>
+                  </>
+                ) : (
+                  <>
+                    <h3>
+                      {teachers.find(
+                        (t) => String(t.id) === String(item.teacher_id),
+                      )?.name || "Professor não encontrado"}
+                    </h3>
+                    <p>
+                      {DAYS[item.weekday]} · {timeRange(item.hour)}
+                    </p>
+                    <span
+                      className={`badge ${item.status ? "unavailable" : ""}`}
+                    >
+                      {item.status ? "Indisponível" : "Disponível"}
+                    </span>
+                  </>
+                )}
+              </div>
+              <div className="actions">
+                <button
+                  disabled={busy}
+                  onClick={() => open(item)}
+                  aria-label={`Editar ${isTeachers ? item.name : timeRange(item.hour)}`}
+                >
+                  Editar
+                </button>
+                <button
+                  className="delete"
+                  disabled={busy}
+                  onClick={() => setDeleting(item)}
+                  aria-label={`Excluir ${isTeachers ? item.name : timeRange(item.hour)}`}
+                >
+                  Excluir
+                </button>
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+      {deleting && (
+        <ConfirmDialog
+          title={isTeachers ? "Excluir professor?" : "Excluir classe?"}
+          busy={busy}
+          onCancel={() => setDeleting(null)}
+          onConfirm={remove}
+        >
+          {isTeachers
+            ? `Ao excluir ${deleting.name}, todas as classes relacionadas também serão excluídas. Esta ação não pode ser desfeita.`
+            : "Esta classe será excluída. Esta ação não pode ser desfeita."}
+        </ConfirmDialog>
+      )}
+    </>
+  );
 }
