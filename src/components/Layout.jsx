@@ -193,7 +193,9 @@ export default function Layout() {
             <p>
               Educação, cultura e arte.
               <br />
-              Conhecimento para novas possibilidades.
+              Criado por Alfredo Pauli.
+              <br />
+              © 2026 Precepta Educação. Todos os direitos reservados.
             </p>
           </div>
           <div className="footer-contact">
